@@ -9,8 +9,8 @@ print(f"Hola {nombre}!")
 nombre = input("Introduce tu nombre: ")
 apellido = input("Introduce tu apellido: ")
 edad = input("Introduce tu edad: ")
-lugarResidencia = input("Introduce tu lugar de residencia: ")
-print(f"Soy {nombre} {apellido}, tengo {edad} años y vivo en {lugarResidencia}.")
+lugar_residencia = input("Introduce tu lugar de residencia: ")
+print(f"Soy {nombre} {apellido}, tengo {edad} años y vivo en {lugar_residencia}.")
 
 # ejercicio 4
 radio = input("Ingresa el radio de un círculo: ")
@@ -64,14 +64,14 @@ imc = float(peso) / (float(altura) ** 2)
 print(f"Tu IMC es: {imc:.2f}")
 
 # ejercicio 9
-tempCelsius = input("Ingresa la temperatura en grados Celsius: ")
-tempFahrenheit = (9/5 * float(tempCelsius) + 32 )
+temp_celsius = input("Ingresa la temperatura en grados Celsius: ")
+temp_fahrenheit = (9/5 * float(temp_celsius) + 32 )
 
-print(f"La temperatura en grados Fahrenheit es: {tempFahrenheit}")
+print(f"La temperatura en grados Fahrenheit es: {temp_fahrenheit}")
 
 # ejercicio 10
-num1 = input("Ingresa el primer número: ")
-num2 = input("Ingresa el segundo número: ")
-num3 = input("Ingresa el tercer número: ")
-promedio = (int(num1) + int(num2) + int(num3)) / 3
-print(f"El promedio de {num1}, {num2} y {num3} es: {promedio}")
+num_1 = input("Ingresa el primer número: ")
+num_2 = input("Ingresa el segundo número: ")
+num_3 = input("Ingresa el tercer número: ")
+promedio = (int(num_1) + int(num_2) + int(num_3)) / 3
+print(f"El promedio de {num_1}, {num2} y {num_3} es: {promedio}")
