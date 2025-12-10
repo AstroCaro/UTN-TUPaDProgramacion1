@@ -103,7 +103,8 @@ def validar_numero_real(valor):
     return valor.isdecimal() and float(valor) > 0
 
 def estandarizar_nombre(nombre):
-    return " ".join(nombre).strip().lower().split()
+    palabras = nombre.strip().lower().split()
+    return " ".join(palabras)
 
 # Solicitud de datos para un nuevo país
 def solicitar_nombre_pais(paises):
@@ -178,19 +179,19 @@ def buscar_pais(nombre, paises):
             return i
     return -1
 
-# Opción 3: Buscar un país por nombre
+# Opción 3: Buscar un país por nombre(coincidencia exacta o parcial)
 def buscar_pais_por_nombre(paises):
-    nombre_buscar = input("Ingrese el nombre del país a actualizar: ").strip()
+    nombre_buscar = input("Ingrese el nombre del país a buscar: ").strip()
     if not validar_texto(nombre_buscar):
         print("Error: El nombre del país no es válido.")
         return
-    indice = buscar_pais(nombre_buscar, paises)
-    if indice == -1:
-        print(f"El país '{nombre_buscar}' no se encuentra en el listado.")
-        return
-    pais = paises[indice]
-    print(f"País encontrado: {pais['nombre']}, Población: {pais['poblacion']}, Superficie: {pais['superficie']} km², Continente: {pais['continente']}")
-    
+    pais_estandarizado = estandarizar_nombre(nombre_buscar)
+    resultados = []
+    for pais in paises:
+        if pais_estandarizado in estandarizar_nombre(pais["nombre"]):
+            resultados.append(pais)
+    for pais in resultados:
+        print(f"País: {pais['nombre']}, Población: {pais['poblacion']}, Superficie: {pais['superficie']} km², Continente: {pais['continente']}")
     
 # ============================================================================
 # MÓDULO: FILTROS
