@@ -309,7 +309,7 @@ def mostrar_estadisticas(paises):
 
 # ============================================================================
 # MÓDULO: BLOQUE MAIN
-# Menú principal y flujo del programa
+# Menú principal y inicia flujo del programa
 # ============================================================================
 
 def mostrar_menu():
