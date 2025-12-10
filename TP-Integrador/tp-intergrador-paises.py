@@ -6,7 +6,7 @@ import time
 # ============================================================================
 # MÓDULO: DATOS
 # Gestión de persistencia y manipulación de datos
-# ============================================================================11
+# ============================================================================
 
 # Obtener la ruta del directorio donde está este script
 DIRECTORIO_ACTUAL = os.path.dirname(os.path.abspath(__file__))
@@ -14,23 +14,39 @@ NOMBRE_ARCHIVO = os.path.join(DIRECTORIO_ACTUAL, "paises.csv")
 
 def cargar_paises():
     paises = []
-    if not os.path.exists(NOMBRE_ARCHIVO):
-        with open(NOMBRE_ARCHIVO, mode='w', newline='', encoding='utf-8') as archivo: 
-            escritor = csv.DictWriter(archivo, fieldnames=["nombre","poblacion","superficie","continente"])
-            escritor.writeheader()
-            return paises
-        
-    with open(NOMBRE_ARCHIVO, mode='r', newline='', encoding='utf-8') as archivo:
-        lector = csv.DictReader(archivo)
-        for fila in lector:
-            pais = {
-                "nombre": fila["nombre"],
-                "poblacion": int(fila["poblacion"]),
-                "superficie": float(fila["superficie"]),
-                "continente": fila["continente"]
-            }
-            paises.append(pais)
+    try:
+        if not os.path.exists(NOMBRE_ARCHIVO):
+            with open(NOMBRE_ARCHIVO, mode='w', newline='', encoding='utf-8') as archivo: 
+                escritor = csv.DictWriter(archivo, fieldnames=["nombre","poblacion","superficie","continente"])
+                escritor.writeheader()
+                return paises
+    except (PermissionError, IOError) as e:
+        print(f"Error al crear el archivo '{NOMBRE_ARCHIVO}': {e}")
+        sys.exit(1)
+            
+    try:
+        with open(NOMBRE_ARCHIVO, mode='r', newline='', encoding='utf-8') as archivo:
+            lector = csv.DictReader(archivo)
+            for fila in lector:
+                try:
+                    pais = {
+                        "nombre": fila["nombre"],
+                        "poblacion": int(fila["poblacion"]),
+                        "superficie": float(fila["superficie"]),
+                        "continente": fila["continente"]
+                    }
+                    paises.append(pais)
+                except (ValueError, KeyError) as e:
+                    print(f"Error al leer la fila {fila}: {e}. Se omitirá esta fila.")
+                    continue
+    except FileNotFoundError:
+        print(f"Error: No se encontró el archivo.")
+    except PermissionError:
+        print(f"Error: No se tienen permisos.")
+    except Exception as e:
+        print(f"Error al cargar países: {e}")
     return paises
+    
 
 def persistir_pais(pais):
     with open(NOMBRE_ARCHIVO, mode='a', newline='', encoding='utf-8') as archivo:
@@ -200,11 +216,30 @@ def buscar_pais_por_nombre(paises):
 
 # Opción 4: Filtrar países por continente, rango de población o superficie
 def filtrar_paises(paises):
-    continente = input("Ingrese el continente para filtrar (o deje vacío para omitir): ").strip()
-    poblacion_min = input("Ingrese la población mínima para filtrar (o deje vacío para omitir): ").strip()
-    poblacion_max = input("Ingrese la población máxima para filtrar (o deje vacío para omitir): ").strip()
-    superficie_min = input("Ingrese la superficie mínima para filtrar (o deje vacío para omitir): ").strip()
-    superficie_max = input("Ingrese la superficie máxima para filtrar (o deje vacío para omitir): ").strip()
+    if not paises:
+        print("No hay países en el listado para filtrar.")
+        return
+    print("\n--- Ingrese los criterios de filtrado (deje vacío para omitir) ---")
+
+
+    continente = input("Continente: ").strip()
+
+    poblacion_min = input("Población mínima: ").strip()
+    if poblacion_min and not validar_entero_positivo(poblacion_min):
+        print("Error: La población mínima debe ser un número entero positivo.")
+        return
+    poblacion_max = input("Población máxima: ").strip()
+    if poblacion_max and not validar_entero_positivo(poblacion_max):
+        print("Error: La población máxima debe ser un número entero positivo.")
+        return
+    superficie_min = input("Superficie mínima: ").strip()
+    if superficie_min and not validar_numero_real(superficie_min):
+        print("Error: La superficie mínima debe ser un número positivo.")
+        return
+    superficie_max = input("Superficie máxima: ").strip()
+    if superficie_max and not validar_numero_real(superficie_max):
+        print("Error: La superficie máxima debe ser un número positivo.")
+        return
     resultados = []
     for pais in paises:
         if continente and pais['continente'].lower() != continente.lower():
@@ -218,6 +253,10 @@ def filtrar_paises(paises):
         if superficie_max and pais['superficie'] > float(superficie_max):
             continue
         resultados.append(pais)
+    if not resultados:
+        print("No se encontraron países que cumplan con los criterios de filtrado.")
+        return
+    print(f"\n Se encontraron {len(resultados)} países:\n")
     for pais in resultados:
         print(f"País: {pais['nombre']}, Población: {pais['poblacion']}, Superficie: {pais['superficie']} km², Continente: {pais['continente']}")
         
