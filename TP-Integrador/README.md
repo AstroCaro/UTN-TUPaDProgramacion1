@@ -259,7 +259,7 @@ China,1400000000,9596961.0,Asia
 
 ## 🎥 Video Explicativo
 
-👉 **Video del Trabajo Práctico:** *[Próximamente]*
+👉 **Video del Trabajo Práctico:** [Video](https://youtu.be/6fsPilScWLw)
 
 ---
 
