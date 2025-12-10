@@ -206,6 +206,9 @@ def buscar_pais_por_nombre(paises):
     for pais in paises:
         if pais_estandarizado in estandarizar_nombre(pais["nombre"]):
             resultados.append(pais)
+    if not resultados:
+        print(f"No se encontraron países que coincidan con '{nombre_buscar}'.")
+        return
     for pais in resultados:
         print(f"País: {pais['nombre']}, Población: {pais['poblacion']}, Superficie: {pais['superficie']} km², Continente: {pais['continente']}")
     
