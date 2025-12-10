@@ -3,34 +3,15 @@ import os
 import sys
 import time
 
+# ============================================================================
+# MÓDULO: DATOS
+# Gestión de persistencia y manipulación de datos
+# ============================================================================11
+
 # Obtener la ruta del directorio donde está este script
 DIRECTORIO_ACTUAL = os.path.dirname(os.path.abspath(__file__))
 NOMBRE_ARCHIVO = os.path.join(DIRECTORIO_ACTUAL, "paises.csv")
 
-def mostrar_menu():
-    print("\n" + "="*60)
-    print("                     TP INTEGRADOR - PAISES")
-    print("="*60)
-    print("1. Agregar país a listado")
-    print("2. Actualizar país en listado")
-    print("3. Buscar un país por nombre")
-    print("4. Filtrar países")
-    print("5. Ordenar países")
-    print("6. Mostrar estadísticas")
-    print("7. Salir")
-    print("="*60)
-    
-def barra_progreso(total=20):
-    print("\nCargando:", end=" ", flush=True)
-    for i in range(total + 1):
-        porcentaje = int((i / total) * 100)
-        barra = "█" * i + "-" * (total - i)
-        sys.stdout.write(f"\r[{barra}] {porcentaje}%")
-        sys.stdout.flush()
-        time.sleep(0.05)
-    print("\n")
-
-#Cargar paises de csv del mismo directorio
 def cargar_paises():
     paises = []
     if not os.path.exists(NOMBRE_ARCHIVO):
@@ -51,81 +32,6 @@ def cargar_paises():
             paises.append(pais)
     return paises
 
-def validar_texto(texto):
-    return len(texto.strip()) > 0
-
-def validar_entero_positivo(valor):
-    return valor.isdigit() and int(valor) > 0
-
-def validar_numero_real(valor):
-    return valor.isdecimal() and float(valor) > 0
-
-def estandarizar_nombre(nombre):
-    return " ".join(nombre).strip().lower().split()
-
-def nombre_duplicado(nombre, paises):
-    return buscar_pais(nombre, paises) != -1
-
-# Buscar país por nombre y devolver su índice o -1 si no existe 
-def buscar_pais(nombre, paises):
-    pais_estandarizado = estandarizar_nombre(nombre)
-    for i, pais in enumerate(paises):
-        if estandarizar_nombre(pais["nombre"]) == pais_estandarizado:
-            print(f"País '{nombre}' encontrado en el índice {i}.")
-            return i
-    return -1
-
-# Solicitud de datos para un nuevo país
-
-def solicitar_nombre_pais(paises):
-    nombre_input = input("Ingrese el nombre del país: ").strip()
-    if not validar_texto(nombre_input):
-        print("Error: El nombre del país no es válido. Intente nuevamente.")
-        return solicitar_nombre_pais(paises)
-    if nombre_duplicado(nombre_input, paises):
-        print("Error: El país ya existe en el listado. Intente nuevamente.")
-        return solicitar_nombre_pais(paises)
-    return nombre_input
-
-def solicitar_poblacion_pais():
-    poblacion_input = input("Ingrese la población del país: ").strip()
-    if not validar_entero_positivo(poblacion_input):
-        print("Error: La población debe ser un número entero positivo.")
-        return solicitar_poblacion_pais()
-    return int(poblacion_input)
-
-def solicitar_superficie_pais():
-    superficie_input = input("Ingrese la superficie del país (en km²): ").strip()
-    if not validar_numero_real(superficie_input):
-        print("Error: La superficie debe ser un número positivo.")
-        return solicitar_superficie_pais()
-    return float(superficie_input)
-
-def solicitar_continente_pais():
-    continente_input = input("Ingrese el continente del país: ").strip()
-    if not validar_texto(continente_input):
-        print("Error: El continente no es válido.")
-        return solicitar_continente_pais()
-    return continente_input
-
-
-def solicitar_datos_nuevo_pais(paises):
-    nombre = solicitar_nombre_pais(paises)
-    poblacion = solicitar_poblacion_pais() 
-    superficie = solicitar_superficie_pais()   
-    continente = solicitar_continente_pais()
-    return nombre, poblacion, superficie, continente
-
-def agregar_pais_a_lista(paises, nombre, poblacion, superficie, continente):
-    nuevo_pais = {
-        "nombre": nombre,
-        "poblacion": poblacion,
-        "superficie": superficie,
-        "continente": continente
-    }
-    paises.append(nuevo_pais)
-    return True
-
 def persistir_pais(pais):
     with open(NOMBRE_ARCHIVO, mode='a', newline='', encoding='utf-8') as archivo:
         escritor = csv.DictWriter(archivo, fieldnames=["nombre","poblacion","superficie","continente"])
@@ -138,22 +44,15 @@ def persistir_paises(paises):
         for pais in paises:
             escritor.writerow(pais)
             
-def actualizar_datos(paises):
-    poblacion_input = input("Ingrese la nueva población del país (deje vacío para no cambiar): ").strip()
-    superficie_input = input("Ingrese la nueva superficie del país (deje vacío para no cambiar): ").strip()
-    poblacion = None
-    superficie = None
-    if poblacion_input:
-        if not validar_entero_positivo(poblacion_input):
-            print("Error: La población debe ser un número entero positivo.")
-            return None
-        poblacion = int(poblacion_input)
-    if superficie_input:
-        if not validar_numero_real(superficie_input):
-            print("Error: La superficie debe ser un número positivo.")
-            return None
-        superficie = float(superficie_input)
-    return poblacion, superficie
+def agregar_pais_a_lista(paises, nombre, poblacion, superficie, continente):
+    nuevo_pais = {
+        "nombre": nombre,
+        "poblacion": poblacion,
+        "superficie": superficie,
+        "continente": continente
+    }
+    paises.append(nuevo_pais)
+    return True
 
 # Opción 1: Agregar país a listado
 def agregar_pais(paises):
@@ -187,7 +86,98 @@ def actualizar_pais(paises):
         paises[indice]['superficie'] = superficie
     persistir_paises(paises)
     print(f"País '{paises[indice]['nombre']}' actualizado exitosamente.")
-    
+
+
+# ============================================================================
+# MÓDULO: VALIDACIONES
+# Validación de entradas y solicitud de datos al usuario
+# ============================================================================
+
+def validar_texto(texto):
+    return len(texto.strip()) > 0
+
+def validar_entero_positivo(valor):
+    return valor.isdigit() and int(valor) > 0
+
+def validar_numero_real(valor):
+    return valor.isdecimal() and float(valor) > 0
+
+def estandarizar_nombre(nombre):
+    return " ".join(nombre).strip().lower().split()
+
+# Solicitud de datos para un nuevo país
+def solicitar_nombre_pais(paises):
+    nombre_input = input("Ingrese el nombre del país: ").strip()
+    if not validar_texto(nombre_input):
+        print("Error: El nombre del país no es válido. Intente nuevamente.")
+        return solicitar_nombre_pais(paises)
+    if nombre_duplicado(nombre_input, paises):
+        print("Error: El país ya existe en el listado. Intente nuevamente.")
+        return solicitar_nombre_pais(paises)
+    return nombre_input
+
+def solicitar_poblacion_pais():
+    poblacion_input = input("Ingrese la población del país: ").strip()
+    if not validar_entero_positivo(poblacion_input):
+        print("Error: La población debe ser un número entero positivo.")
+        return solicitar_poblacion_pais()
+    return int(poblacion_input)
+
+def solicitar_superficie_pais():
+    superficie_input = input("Ingrese la superficie del país (en km²): ").strip()
+    if not validar_numero_real(superficie_input):
+        print("Error: La superficie debe ser un número positivo.")
+        return solicitar_superficie_pais()
+    return float(superficie_input)
+
+def solicitar_continente_pais():
+    continente_input = input("Ingrese el continente del país: ").strip()
+    if not validar_texto(continente_input):
+        print("Error: El continente no es válido.")
+        return solicitar_continente_pais()
+    return continente_input
+
+def solicitar_datos_nuevo_pais(paises):
+    nombre = solicitar_nombre_pais(paises)
+    poblacion = solicitar_poblacion_pais() 
+    superficie = solicitar_superficie_pais()   
+    continente = solicitar_continente_pais()
+    return nombre, poblacion, superficie, continente
+          
+def actualizar_datos(paises):
+    poblacion_input = input("Ingrese la nueva población del país (deje vacío para no cambiar): ").strip()
+    superficie_input = input("Ingrese la nueva superficie del país (deje vacío para no cambiar): ").strip()
+    poblacion = None
+    superficie = None
+    if poblacion_input:
+        if not validar_entero_positivo(poblacion_input):
+            print("Error: La población debe ser un número entero positivo.")
+            return None
+        poblacion = int(poblacion_input)
+    if superficie_input:
+        if not validar_numero_real(superficie_input):
+            print("Error: La superficie debe ser un número positivo.")
+            return None
+        superficie = float(superficie_input)
+    return poblacion, superficie
+
+
+# ============================================================================
+# MÓDULO: BÚSQUEDAS
+# Funciones para buscar países en el listado
+# ============================================================================
+def nombre_duplicado(nombre, paises):
+    return buscar_pais(nombre, paises) != -1
+
+# Buscar país por nombre y devolver su índice o -1 si no existe 
+def buscar_pais(nombre, paises):
+    pais_estandarizado = estandarizar_nombre(nombre)
+    for i, pais in enumerate(paises):
+        if estandarizar_nombre(pais["nombre"]) == pais_estandarizado:
+            print(f"País '{nombre}' encontrado en el índice {i}.")
+            return i
+    return -1
+
 # Opción 3: Buscar un país por nombre
 def buscar_pais_por_nombre(paises):
     nombre_buscar = input("Ingrese el nombre del país a actualizar: ").strip()
@@ -201,6 +191,12 @@ def buscar_pais_por_nombre(paises):
     pais = paises[indice]
     print(f"País encontrado: {pais['nombre']}, Población: {pais['poblacion']}, Superficie: {pais['superficie']} km², Continente: {pais['continente']}")
     
+    
+# ============================================================================
+# MÓDULO: FILTROS
+# Funciones para filtrar países según diferentes criterios
+# ============================================================================
+
 # Opción 4: Filtrar países por continente, rango de población o superficie
 def filtrar_paises(paises):
     continente = input("Ingrese el continente para filtrar (o deje vacío para omitir): ").strip()
@@ -225,19 +221,29 @@ def filtrar_paises(paises):
         print(f"País: {pais['nombre']}, Población: {pais['poblacion']}, Superficie: {pais['superficie']} km², Continente: {pais['continente']}")
         
 
+# ============================================================================
+# MÓDULO: ORDENAMIENTO
+# Funciones para ordenar países según diferentes criterios
+# ============================================================================
+
 # Opción 5: Ordenar países por nombre, población o superficie (ascendente o descendente)
 def ordenar_paises(paises):
     if not paises:
         print("No hay países en el listado para ordenar.")
         return
     criterio = input("Ingrese el criterio de ordenamiento (nombre/poblacion/superficie): ").strip().lower()
-    orden = input("Ingrese el orden (ascendente/descendente): ").strip().lower()
-    reverse = orden == "descendente"
+    orden = input("Ingrese el orden (asc/desc): ").strip().lower()
+    reverse = orden == "desc"
     paises_ordenados = sorted(paises, key=lambda x: x[criterio], reverse=reverse)
     for pais in paises_ordenados:
         print(f"País: {pais['nombre']}, Población: {pais['poblacion']}, Superficie: {pais['superficie']} km², Continente: {pais['continente']}")
     
-        
+
+# ============================================================================
+# MÓDULO: ESTADÍSTICA
+# Funciones para calcular y mostrar estadísticas sobre países
+# ============================================================================
+
 # Opción 6: Mostrar estadísticas de los países (pais con mayor y menor población, promedio de población, promedio de superficie, cantidad de países por continente)
 def mostrar_estadisticas(paises):
     if not paises:
@@ -260,6 +266,35 @@ def mostrar_estadisticas(paises):
     print("Cantidad de países por continente:")
     for continente, cantidad in paises_por_continente.items():
         print(f"  {continente}: {cantidad}")
+
+# ============================================================================
+# MÓDULO: BLOQUE MAIN
+# Menú principal y flujo del programa
+# ============================================================================
+
+def mostrar_menu():
+    print("\n" + "="*60)
+    print("                     TP INTEGRADOR - PAISES")
+    print("="*60)
+    print("1. Agregar país a listado")
+    print("2. Actualizar país en listado")
+    print("3. Buscar un país por nombre")
+    print("4. Filtrar países")
+    print("5. Ordenar países")
+    print("6. Mostrar estadísticas")
+    print("7. Salir")
+    print("="*60)
+    
+def barra_progreso(total=20):
+    print("\nCargando:", end=" ", flush=True)
+    for i in range(total + 1):
+        porcentaje = int((i / total) * 100)
+        barra = "█" * i + "-" * (total - i)
+        sys.stdout.write(f"\r[{barra}] {porcentaje}%")
+        sys.stdout.flush()
+        time.sleep(0.05)
+    print("\n")
+
 
 def main():
     paises = cargar_paises()
@@ -292,6 +327,6 @@ def main():
             case _:
                 print("Opción no válida. Por favor, seleccione una opción del 1 al 7.")
         barra_progreso()
-
+        
 if __name__ == "__main__":
     main()
